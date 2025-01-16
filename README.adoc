@@ -1,16 +1,36 @@
 = Harman Kardon Aura Speaker Protocol Analysis
 
-I’ve got a Harman Kardon Aura speaker that has served me well for a number of years. I’m hoping to reverse-engineer the protocol it uses to communicate with its companion app.
+I have a Harman Kardon Aura Plus speaker and want to reverse-engineer the protocol it uses with its app (Bass, EQ, Volume) and control playback (Pause, Play, Set Volume) and integrate it into Home Assistant, eliminating the need for the app. The speaker connects via Wi-Fi, and the HK Remote app controls bass and EQ settings not available elsewhere.
 
-The speaker connects over wifi and supports AirPlay. For its initial connection, it can be set up over USB using a built-in iOS function or it can broadcast its own wifi to connect to your own network. These things will continue to work in perpetuity.
-
-Less certain is the fate of the HK Remote app 27. It also allows control over a couple of things that can’t be controlled by the config page or physically: bass and a special EQ function. The app does the job, but one day an iOS update will probably break it.
+NOTE: This is a personal project and should be used only for personal purposes.
 
 == Initial attempts
 
-This isn’t my area of expertise! I’ve captured the packets from the speaker (172.16.1.68) with `sudo ettercap -T -M arp:remote /172.16.1.66// /172.16.1.68// -w capture.pcap` and analyzed the pcap file with WireShark.
+I’ve captured the packets from the speaker (172.16.1.68), the iPhone with the app installed on it (172.16.1.69), and the Mac that was streaming the music (172.16.1.66) with `sudo ettercap -T -M arp:remote /172.16.1.66// /172.16.1.68// /172.16.1.69// -w packets.pcap` and analyzed the pcap file with WireShark.
 
 Looking at any packets that might be immediately relevant, we get this:
+
+
+----
+Wed Jan 15 15:45:54 2025 [442538]
+TCP  172.16.1.69:62528 --> 172.16.1.68:8080 | AP (202)
+GET /description.xml HTTP/1.1.
+Host: 172.16.1.68:8080.
+Date: Wed, 15 Jan 2025 03:45:39 GMT.
+Connection: Keep-Alive.
+User-Agent: NFLC/2.2 UPnP/1.0 DLNADOC/1.50.
+friendlyName.dlna.org: Access_NFLC/2.2.
+
+Wed Jan 15 15:45:54 2025 [144199]
+UDP  172.16.1.68:3911 --> 172.16.1.69:63631 |  (226)
+HTTP/1.1 200 OK.
+CACHE-CONTROL: max-age=1800.
+EXT:.
+LOCATION: http://172.16.1.68:8080/description.xml.
+SERVER: KnOS/3.2 UPnP/1.0 DMP/3.5.
+ST: upnp:rootdevice.
+USN: uuid:abc123-def456-ghi789-jkl012-mno345678901::upnp:rootdevice.
+----
 
 === Initial Handshake (OPTIONS Command)
 
@@ -22,8 +42,8 @@ Wed Jan 15 15:52:09 2025 [489609]
 TCP  172.16.1.66:65374 --> 172.16.1.68:5000 | AP (114)
 OPTIONS * RTSP/1.0.
 CSeq: 0.
-DACP-ID: 3015E58E9028C5B3.
-Active-Remote: 1288562669.
+DACP-ID: 1234A56B7890D1E2.
+Active-Remote: 9876543210.
 User-Agent: AirPlay/775.3.1.
 
 Wed Jan 15 15:52:09 2025 [508360]
@@ -33,14 +53,13 @@ Public: ANNOUNCE, SETUP, RECORD, PAUSE, FLUSH, TEARDOWN, OPTIONS, GET_PARAMETER,
 Server: AirTunes/190.9.
 CSeq: 0.
 .
-----
 
 Wed Jan 15 15:55:45 2025 [908698]
 TCP  172.16.1.66:49340 --> 172.16.1.68:5000 | AP (114)
 OPTIONS * RTSP/1.0.
 CSeq: 1.
-DACP-ID: 3015E58E9028C5B3.
-Active-Remote: 1288562669.
+DACP-ID: 1234A56B7890D1E2.
+Active-Remote: 9876543210.
 User-Agent: AirPlay/775.3.1.
 .
 
@@ -50,6 +69,8 @@ RTSP/1.0 200 OK.
 Public: ANNOUNCE, SETUP, RECORD, PAUSE, FLUSH, TEARDOWN, OPTIONS, GET_PARAMETER, SET_PARAMETER, POST, GET.
 Server: AirTunes/190.9.
 CSeq: 1.
+
+----
 
 === Authorization (POST Command)
 
@@ -63,8 +84,8 @@ POST /auth-setup RTSP/1.0.
 Content-Length: 33.
 Content-Type: application/octet-stream.
 CSeq: 2.
-DACP-ID: 3015E58E9028C5B3.
-Active-Remote: 1288562669.
+DACP-ID: 1234A56B7890D1E2.
+Active-Remote: 9876543210.
 User-Agent: AirPlay/775.3.1.
 
 Wed Jan 15 15:55:47 2025 [57885]
@@ -91,8 +112,8 @@ ANNOUNCE rtsp://172.16.1.68/2009199015507279999 RTSP/1.0.
 Content-Length: 333.
 Content-Type: application/sdp.
 CSeq: 3.
-DACP-ID: 3015E58E9028C5B3.
-Active-Remote: 1288562669.
+DACP-ID: 1234A56B7890D1E2.
+Active-Remote: 9876543210.
 User-Agent: AirPlay/775.3.1.
 .
 v=0.
@@ -120,8 +141,8 @@ TCP  172.16.1.66:49340 --> 172.16.1.68:5000 | AP (230)
 SETUP rtsp://172.16.1.68/2009199015507279999 RTSP/1.0.
 Transport: RTP/AVP/UDP;unicast;mode=record;timing_port=55965;control_port=50963.
 CSeq: 4.
-DACP-ID: 3015E58E9028C5B3.
-Active-Remote: 1288562669.
+DACP-ID: 1234A56B7890D1E2.
+Active-Remote: 9876543210.
 User-Agent: AirPlay/775.3.1.
 
 Wed Jan 15 15:55:47 2025 [98015]
@@ -146,8 +167,8 @@ GET_PARAMETER rtsp://172.16.1.68/2009199015507279999 RTSP/1.0.
 Content-Length: 8.
 Content-Type: text/parameters.
 CSeq: 5.
-DACP-ID: 3015E58E9028C5B3.
-Active-Remote: 1288562669.
+DACP-ID: 1234A56B7890D1E2.
+Active-Remote: 9876543210.
 User-Agent: AirPlay/775.3.1.
 .
 volume.
@@ -173,8 +194,8 @@ Wed Jan 15 15:55:47 2025 [118243]
 TCP  172.16.1.66:49340 --> 172.16.1.68:5000 | AP (150)
 RECORD rtsp://172.16.1.68/2009199015507279999 RTSP/1.0.
 CSeq: 6.
-DACP-ID: 3015E58E9028C5B3.
-Active-Remote: 1288562669.
+DACP-ID: 1234A56B7890D1E2.
+Active-Remote: 9876543210.
 User-Agent: AirPlay/775.3.1.
 .
 
@@ -185,23 +206,4 @@ Audio-Latency: 4316.
 Server: AirTunes/190.9.
 CSeq: 6.
 .
-----
-
-== WireShark data for the Post /auth
-
-----
-0000   50 4f 53 54 20 2f 61 75 74 68 2d 73 65 74 75 70   POST /auth-setup
-0010   20 52 54 53 50 2f 31 2e 30 0d 0a 43 6f 6e 74 65    RTSP/1.0..Conte
-0020   6e 74 2d 4c 65 6e 67 74 68 3a 20 33 33 0d 0a 43   nt-Length: 33..C
-0030   6f 6e 74 65 6e 74 2d 54 79 70 65 3a 20 61 70 70   ontent-Type: app
-0040   6c 69 63 61 74 69 6f 6e 2f 6f 63 74 65 74 2d 73   lication/octet-s
-0050   74 72 65 61 6d 0d 0a 43 53 65 71 3a 20 32 0d 0a   tream..CSeq: 2..
-0060   44 41 43 50 2d 49 44 3a 20 33 30 31 35 45 35 38   DACP-ID: 3015E58
-0070   45 39 30 32 38 43 35 42 33 0d 0a 41 63 74 69 76   E9028C5B3..Activ
-0080   65 2d 52 65 6d 6f 74 65 3a 20 31 32 38 38 35 36   e-Remote: 128856
-0090   32 36 36 39 0d 0a 55 73 65 72 2d 41 67 65 6e 74   2669..User-Agent
-00a0   3a 20 41 69 72 50 6c 61 79 2f 37 37 35 2e 33 2e   : AirPlay/775.3.
-00b0   31 0d 0a 0d 0a 01 99 be 47 4d f1 f7 c6 f2 b0 d8   1.......GM......
-00c0   35 38 73 18 da e2 91 cd b3 54 aa 05 25 c9 c4 90   58s......T..%...
-00d0   8b e3 15 28 50 55                                 ...(PU
 ----
