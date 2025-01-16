@@ -1,3 +1,5 @@
+<!-- Defines the QPlay service for the Harman Kardon Aura speaker using the UPnP (Universal Plug and Play) protocol. It specifies the actions that can be performed on the QPlay service, such as setting the network, authenticating QPlay, inserting tracks, setting track information, getting track count, and removing tracks. Each action includes a list of arguments and their directions (input or output). The file also defines state variables that describe the current state of the QPlay service, such as SSID, authentication keys, track metadata, and queue IDs. This information is used by UPnP clients to manage and control the speaker's QPlay functionality. -->
+
 <?xml version="1.0"?>
 <scpd
   xmlns="urn:schemas-upnp-org:service-1-0">

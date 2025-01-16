@@ -1,6 +1,7 @@
 = Harman Kardon Aura Speaker Protocol Analysis
 
-I have a Harman Kardon Aura Plus speaker and want to reverse-engineer the protocol it uses with its app (Bass, EQ, Volume) and control playback (Pause, Play, Set Volume) and integrate it into Home Assistant, eliminating the need for the app. The speaker connects via Wi-Fi, and the HK Remote app controls bass and EQ settings not available elsewhere.
+I have a Harman Kardon Aura Plus speaker and want to reverse-engineer the protocol it uses with its app (Bass, EQ, Volume) and control playback (Pause, Play, Set Volume) and integrate it into Home Assistant, eliminating the need for the app. +
+The speaker connects via Wi-Fi, and the HK Remote app controls bass and EQ settings not available elsewhere.
 
 NOTE: This is a personal project and should be used only for personal purposes.
 
@@ -10,6 +11,7 @@ I’ve captured the packets from the speaker (172.16.1.68), the iPhone with the 
 
 Looking at any packets that might be immediately relevant, we get this:
 
+Further details regarding the following packet capture can be found in the link:xml_files[] folder:
 
 ----
 Wed Jan 15 15:45:54 2025 [442538]
@@ -208,5 +210,69 @@ RTSP/1.0 200 OK.
 Audio-Latency: 4316.
 Server: AirTunes/190.9.
 CSeq: 6.
+.
+----
+
+=== Streaming Stop (FLUSH Command)
+
+The client sends a FLUSH command to stop the audio stream. This command serves multiple purposes: +
+* Clear Buffered Data: It instructs the server to discard any remaining buffered audio data. +
+* Reset Stream State: The stream is reset, preparing it for future playback commands without leftover state issues. +
+The server issues an HTTP GET request to update its internal state, marking the device as no longer busy.
+----
+Wed Jan 15 15:56:05 2025 [967760]
+TCP  172.16.1.66:63018 --> 172.16.1.68:5000 | AP (189)
+FLUSH rtsp://172.16.1.68/12677144773249746566 RTSP/1.0.
+RTP-Info: seq=25571;rtptime=1813353161.
+CSeq: 7.
+DACP-ID: 1234A56B7890D1E2.
+Active-Remote: 9876543210.
+User-Agent: AirPlay/775.3.1.
+.
+
+Wed Jan 15 15:56:05 2025 [982161]
+TCP  172.16.1.68:1029 --> 172.16.1.66:49797 | AP (132)
+GET /ctrl-int/1/setproperty?dmcp.device-busy=0 HTTP/1.1.
+Host: Vakintosh...sMBPro.local..
+Active-Remote: 9876543210.
+User-Agent: AirPlay/190.9.
+.
+
+Wed Jan 15 15:56:05 2025 [982162]
+TCP  172.16.1.68:5000 --> 172.16.1.66:63018 | A (0)
+Wed Jan 15 15:56:05 2025 [982162]
+TCP  172.16.1.68:5000 --> 172.16.1.66:63018 | AP (73)
+RTSP/1.0 200 OK.
+RTP-Info: rtptime=0.
+Server: AirTunes/190.9.
+CSeq: 7.
+.
+----
+
+=== Parameter Adjustment (SET_PARAMETER Command)
+
+The client sends a SET_PARAMETER command to adjust specific playback or configuration parameters of the server. +
+This allows for real-time updates without interrupting the audio stream - in this case, to adjust the volume. +
+The server acknowledges the SET_PARAMETER request with an RTSP/1.0 200 OK response, confirming the parameter was applied successfully. +
+This ensures real-time feedback for parameter adjustments.
+
+----
+Wed Jan 15 15:56:23 2025 [635492]
+TCP  172.16.1.66:63018 --> 172.16.1.68:5000 | AP (229)
+SET_PARAMETER rtsp://172.16.1.68/12677144773249746566 RTSP/1.0.
+Content-Length: 20.
+Content-Type: text/parameters.
+CSeq: 39.
+DACP-ID: 1234A56B7890D1E2.
+Active-Remote: 9876543210.
+User-Agent: AirPlay/775.3.1.
+.
+volume: -25.533905.
+
+Wed Jan 15 15:56:30 2025 [565505]
+TCP  172.16.1.68:5000 --> 172.16.1.66:63018 | AP (53)
+RTSP/1.0 200 OK.
+Server: AirTunes/190.9.
+CSeq: 10.
 .
 ----

@@ -1,3 +1,5 @@
+<!-- Defines the AVTransport service for the Harman Kardon Aura speaker using the UPnP (Universal Plug and Play) protocol. It specifies the actions that can be performed on the AVTransport service, such as setting the transport URI, getting media information, controlling playback (play, pause, stop, seek), and querying transport settings. Each action includes a list of arguments and their directions (input or output). The file also defines state variables that describe the current state of the AVTransport service, such as transport state, playback speed, and media duration. This information is used by UPnP clients to interact with and control the speaker's media transport functions. -->
+
 <?xml version="1.0"?>
 <scpd
   xmlns="urn:schemas-upnp-org:service-1-0">

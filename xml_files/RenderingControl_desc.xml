@@ -1,3 +1,5 @@
+<!-- Defines the RenderingControl service for the Harman Kardon Aura speaker using the UPnP (Universal Plug and Play) protocol. It specifies the actions that can be performed on the RenderingControl service, such as listing presets, selecting presets, getting and setting mute status, and getting and setting volume levels. Each action includes a list of arguments and their directions (input or output). The file also defines state variables that describe the current state of the RenderingControl service, such as mute status, volume level, and preset names. This information is used by UPnP clients to manage and control the speaker's rendering settings. -->
+
 <?xml version="1.0"?>
 <scpd
   xmlns="urn:schemas-upnp-org:service-1-0">
