@@ -1,0 +1,13 @@
+= Harman Kardon Aura service
+
+== Overview
+
+The link:description.xml[] describes the Harman Kardon Aura speaker's device and service capabilities using the UPnP (Universal Plug and Play) protocol. It includes metadata such as the device's friendly name, manufacturer, model, and serial number. The file also lists the services provided by the device, including:
+
+* link:RenderingControl_desc.xml[RenderingControl]
+* link:ConnectionManager_desc.xml[ConnectionManager]
+* link:AVTransport_desc.xml[AVTransport]
+* link:WholeHomeAudio_desc.xml[X_WholeHomeAudio]
+* link:QPlay_desc.xml[QPlay]
+
+Each service includes their respective control and event URLs. This information is used by UPnP clients to interact with and control the speaker.
