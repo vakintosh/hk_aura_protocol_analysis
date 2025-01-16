@@ -34,7 +34,7 @@ USN: uuid:abc123-def456-ghi789-jkl012-mno345678901::upnp:rootdevice.
 
 === Initial Handshake (OPTIONS Command)
 
-Client (172.16.1.66) sends an OPTIONS request to the server (172.16.1.68) to query supported commands.
+Client (172.16.1.66) sends an OPTIONS request to the server (172.16.1.68) to query supported commands. +
 Server (172.16.1.68) responds with `RTSP/1.0 200 OK`, listing supported commands: ANNOUNCE, SETUP, RECORD, etc.
 
 ----
@@ -74,7 +74,7 @@ CSeq: 1.
 
 === Authorization (POST Command)
 
-The client sends a POST request to `/auth-setup`, indicating authentication or key exchange.
+The client sends a POST request to `/auth-setup`, indicating authentication or key exchange. +
 The server responds with a payload of length 1076 bytes, likely containing authentication data or session parameters.
 
 ----
@@ -101,9 +101,12 @@ CSeq: 2.
 === Session Initialization (ANNOUNCE and SETUP Commands)
 
 The client sends an ANNOUNCE request with an SDP (Session Description Protocol) payload:
-Specifies the codec (AppleLossless), sample rate (44100 Hz), and cryptographic keys (mfiaeskey, aesiv).
-The server acknowledges the ANNOUNCE request and confirms session setup via a SETUP command:
-Specifies RTP/AVP/UDP as the transport and provides port numbers for data, control, and timing communication.
+[start=1]
+* Specifies the codec (AppleLossless), sample rate (44100 Hz), and cryptographic keys (mfiaeskey, aesiv). +
+
+The server acknowledges the ANNOUNCE request and confirms session setup via a SETUP command: +
+[start=1]
+* Specifies RTP/AVP/UDP as the transport and provides port numbers for data, control, and timing communication.
 
 ----
 Wed Jan 15 15:55:47 2025 [62613]
@@ -125,8 +128,8 @@ t=0 0.
 m=audio 0 RTP/AVP 96.
 a=rtpmap:96 AppleLossless.
 a=fmtp:96 352 0 16 40 10 14 2 255 0 0 44100.
-a=mfiaeskey:/NUEyiQWTCwrdIxTyj4bqQ==.
-a=aesiv:VzptWXvItTVowSgbeWKmeg==.
+a=mfiaeskey:abcd1234efgh5678ijkl9012mnop3456.
+a=aesiv:987654qwerty65432==.
 a=min-latency:11025.
 a=max-latency:88200.
 
@@ -157,7 +160,7 @@ CSeq: 4.
 
 === Parameter Exchange (GET_PARAMETER Command)
 
-The client queries the volume parameter via a GET_PARAMETER request.
+The client queries the volume parameter via a GET_PARAMETER request. +
 The server responds with the current volume value: -26.250000.
 
 ----
@@ -186,7 +189,7 @@ volume: -26.250000.
 
 === Streaming Begins (RECORD Command)
 
-The client sends a RECORD command to start the audio stream.
+The client sends a RECORD command to start the audio stream. +
 The server acknowledges with a response, providing an Audio-Latency value of 4316 (likely in milliseconds or RTP units).
 
 ----
