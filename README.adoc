@@ -37,11 +37,9 @@ USN: uuid:abc123-def456-ghi789-jkl012-mno345678901::upnp:rootdevice.
 == Setup
 . Make sure your device is connected to the same network as the Harman Kardon speaker. +
 
-. Clone this repository:
-[source,bash]
-----
-    git clone https://github.com/vakintosh/hk_aura_protocol_analysis
-----
+. Clone this repository +
+
+. Update link:Harman_Kardon_Remote/hk_app.py#L6[python script] with the IP Address of your HK Aura
 
 == Available Commands
 
