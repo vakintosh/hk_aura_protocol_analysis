@@ -13,7 +13,6 @@ This port is specific to the speaker's control interface and is used to send com
 This command sets the system volume to a specified level. +
 The volume level is specified in the <para> tag within the XML payload. +
 The minimum value is 0 and the maximum value is 100. +
-python hk_aura_control.py set_system_volume --para 0
 ----
 '<?xml version="1.0" encoding="UTF-8"?>
 <harman>
@@ -33,7 +32,6 @@ python hk_aura_control.py set_system_volume --para 0
 This command sets the bass level to a specified value. +
 The bass level is specified in the <para> tag within the XML payload. +
 The minimum value is 0 and the maximum value is 100. +
-python hk_aura_control.py set_bass_level --para 0
 ----
 '<?xml version="1.0" encoding="UTF-8"?>
 <harman>
@@ -53,7 +51,6 @@ python hk_aura_control.py set_bass_level --para 0
 == set_EQ_mode to Stereo Widening
 This command sets the EQ mode to "Stereo Widening". +
 The EQ mode is specified in the <para> tag within the XML payload. +
-python hk_aura_control.py set_EQ_mode  --para on
 ----
 '<?xml version="1.0" encoding="UTF-8"?>
 <harman>
@@ -72,7 +69,6 @@ python hk_aura_control.py set_EQ_mode  --para on
 == set_EQ_mode to Basic
 This command sets the EQ mode to "Basic". +
 The EQ mode is specified in the <para> tag within the XML payload. +
-python hk_aura_control.py set_EQ_mode  --para off
 ----
 '<?xml version="1.0" encoding="UTF-8"?>
 <harman>
@@ -91,7 +87,6 @@ python hk_aura_control.py set_EQ_mode  --para off
 == heart-alive
 This command sends a heartbeat signal to keep the connection alive. +
 It does not require any parameters in the <para> tag within the XML payload. +
-python hk_aura_control.py heart-alive
 ----
 '<?xml version="1.0" encoding="UTF-8"?>
 <harman>
