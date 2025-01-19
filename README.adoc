@@ -84,12 +84,12 @@ python hk_app.py heart-alive
 
 == Next steps
 
-The next steps would be to implement additional playback controls such as:
-* Play
-* Pause
-* Stop
-* Rewind
-* Previous track
+The next steps would be to implement additional playback controls such as: +
+* Play +
+* Pause +
+* Stop +
+* Rewind +
+* Previous track +
 * Next track
 
 Additionally, integrating these controls into Home Assistant to create a seamless user experience without needing the official app would be beneficial.
