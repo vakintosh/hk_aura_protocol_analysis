@@ -13,6 +13,7 @@ This port is specific to the speaker's control interface and is used to send com
 This command sets the system volume to a specified level. +
 The volume level is specified in the <para> tag within the XML payload. +
 The minimum value is 0 and the maximum value is 100. +
+[,xml]
 ----
 '<?xml version="1.0" encoding="UTF-8"?>
 <harman>
@@ -32,6 +33,7 @@ The minimum value is 0 and the maximum value is 100. +
 This command sets the bass level to a specified value. +
 The bass level is specified in the <para> tag within the XML payload. +
 The minimum value is 0 and the maximum value is 100. +
+[,xml]
 ----
 '<?xml version="1.0" encoding="UTF-8"?>
 <harman>
@@ -51,6 +53,7 @@ The minimum value is 0 and the maximum value is 100. +
 == set_EQ_mode to Stereo Widening
 This command sets the EQ mode to "Stereo Widening". +
 The EQ mode is specified in the <para> tag within the XML payload. +
+[,xml]
 ----
 '<?xml version="1.0" encoding="UTF-8"?>
 <harman>
@@ -69,6 +72,7 @@ The EQ mode is specified in the <para> tag within the XML payload. +
 == set_EQ_mode to Basic
 This command sets the EQ mode to "Basic". +
 The EQ mode is specified in the <para> tag within the XML payload. +
+[,xml]
 ----
 '<?xml version="1.0" encoding="UTF-8"?>
 <harman>
@@ -87,6 +91,7 @@ The EQ mode is specified in the <para> tag within the XML payload. +
 == heart-alive
 This command sends a heartbeat signal to keep the connection alive. +
 It does not require any parameters in the <para> tag within the XML payload. +
+[,xml]
 ----
 '<?xml version="1.0" encoding="UTF-8"?>
 <harman>
@@ -105,7 +110,9 @@ It does not require any parameters in the <para> tag within the XML payload. +
 == Power-off
 This command powers off the Harman Kardon Aura speaker. +
 It does not require any parameters in the <para> tag within the XML payload. +
-<?xml version="1.0" encoding="UTF-8"?>
+[,xml]
+----
+'<?xml version="1.0" encoding="UTF-8"?>
 <harman>
   <mm>
     <common>
@@ -116,4 +123,5 @@ It does not require any parameters in the <para> tag within the XML payload. +
       </control>
     </common>
   </mm>
-</harman>
+</harman>''
+----
