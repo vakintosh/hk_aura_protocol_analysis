@@ -3,10 +3,6 @@
 This project focuses on reverse-engineering the communication protocol of the Harman Kardon Aura Plus speaker. +
 The goal is to control the speaker’s playback (pause, play, volume) and settings (bass, EQ) through a custom integration in Home Assistant, eliminating the need for the official app.
 
-
-I have a Harman Kardon Aura Plus speaker and want to reverse-engineer the protocol it uses with its app (Bass, EQ, Volume) and control playback (Pause, Play, Set Volume) and integrate it into Home Assistant, eliminating the need for the app. +
-The speaker connects via Wi-Fi, and the HK Remote app controls bass and EQ settings not available elsewhere.
-
 NOTE: This is a personal project and should be used only for personal purposes.
 
 == Initial attempts
