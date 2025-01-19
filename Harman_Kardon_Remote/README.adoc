@@ -101,3 +101,19 @@ It does not require any parameters in the <para> tag within the XML payload. +
   </mm>
 </harman>'
 ----
+
+== Power-off
+This command powers off the Harman Kardon Aura speaker. +
+It does not require any parameters in the <para> tag within the XML payload. +
+<?xml version="1.0" encoding="UTF-8"?>
+<harman>
+  <mm>
+    <common>
+      <control>
+        <name>power-off</name>
+        <zone>Main Zone</zone>
+        <para></para>
+      </control>
+    </common>
+  </mm>
+</harman>

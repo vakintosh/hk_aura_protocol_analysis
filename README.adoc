@@ -82,6 +82,13 @@ It does not require any parameters in the <para> tag within the XML payload.
 python hk_app.py heart-alive
 ----
 
+=== Power-off
+This command powers off the Harman Kardon Aura speaker. +
+It does not require any parameters in the <para> tag within the XML payload.
+----
+python hk_app.py power-off
+----
+
 == Next steps
 
 The next steps would be to implement additional playback controls such as: +

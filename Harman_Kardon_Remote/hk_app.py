@@ -36,7 +36,7 @@ def send_request(action, zone='Main Zone', para=None):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Control Harman Kardon Aura Speaker')
-    parser.add_argument('action', choices=['set_system_volume', 'set_bass_level', 'set_EQ_mode', 'heart-alive'], help='Action to perform')
+    parser.add_argument('action', choices=['set_system_volume', 'set_bass_level', 'set_EQ_mode', 'heart-alive', 'power-off'], help='Action to perform')
     parser.add_argument('--zone', default='Main Zone', help='Zone to control (default: Main Zone)')
     parser.add_argument('--para', help='Parameter for the action (e.g., volume level, bass level, EQ mode)')
 
