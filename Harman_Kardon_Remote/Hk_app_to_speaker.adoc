@@ -1,0 +1,106 @@
+= Available Actions
+
+This list includes some actions available in the official app. +
+However, there may be some hidden actions not provided by the app. +
+If you know or find some new actions, please open a PR. +
+
+The port 10025 is used for the connection to the Harman Kardon Aura speaker. +
+This port is specific to the speaker's control interface and is used to send commands in XML format.
+
+== set_system_volume
+This command sets the system volume to a specified level. +
+The volume level is specified in the <para> tag within the XML payload. +
+The minimum value is 0 and the maximum value is 100. +
+python hk_aura_control.py set_system_volume --para 0
+----
+'<?xml version="1.0" encoding="UTF-8"?>
+<harman>
+  <mm>
+    <common>
+      <control>
+        <name>set_system_volume</name>
+        <zone>Main Zone</zone>
+        <para>0</para>
+      </control>
+    </common>
+  </mm>
+</harman>
+----
+
+== set_bass_level
+This command sets the bass level to a specified value. +
+The bass level is specified in the <para> tag within the XML payload. +
+The minimum value is 0 and the maximum value is 100. +
+python hk_aura_control.py set_bass_level --para 0
+----
+'<?xml version="1.0" encoding="UTF-8"?>
+<harman>
+  <mm>
+    <common>
+      <control>
+        <name>set_bass_level</name>
+        <zone>Main Zone</zone>
+        <para>0</para>
+      </control>
+    </common>
+  </mm>
+</harman>
+----
+
+
+== set_EQ_mode to Stereo Widening
+This command sets the EQ mode to "Stereo Widening". +
+The EQ mode is specified in the <para> tag within the XML payload. +
+python hk_aura_control.py set_EQ_mode  --para on
+----
+'<?xml version="1.0" encoding="UTF-8"?>
+<harman>
+  <mm>
+    <common>
+      <control>
+        <name>set_EQ_mode</name>
+        <zone>Main Zone</zone>
+        <para>Stereo Widening</para>
+      </control>
+    </common>
+  </mm>
+</harman>'
+----
+
+== set_EQ_mode to Basic
+This command sets the EQ mode to "Basic". +
+The EQ mode is specified in the <para> tag within the XML payload. +
+python hk_aura_control.py set_EQ_mode  --para off
+----
+'<?xml version="1.0" encoding="UTF-8"?>
+<harman>
+  <mm>
+    <common>
+      <control>
+        <name>set_EQ_mode</name>
+        <zone>Main Zone</zone>
+        <para>Basic</para>
+      </control>
+    </common>
+  </mm>
+</harman>'
+----
+
+== heart-alive
+This command sends a heartbeat signal to keep the connection alive. +
+It does not require any parameters in the <para> tag within the XML payload. +
+python hk_aura_control.py heart-alive
+----
+'<?xml version="1.0" encoding="UTF-8"?>
+<harman>
+  <mm>
+    <common>
+      <control>
+        <name>heart-alive</name>
+        <zone></zone>
+        <para></para>
+      </control>
+    </common>
+  </mm>
+</harman>'
+----

@@ -1,0 +1,242 @@
+=== Initial Handshake (OPTIONS Command)
+
+Client (172.16.1.66) sends an OPTIONS request to the server (172.16.1.68) to query supported commands. +
+Server (172.16.1.68) responds with `RTSP/1.0 200 OK`, listing supported commands: ANNOUNCE, SETUP, RECORD, etc.
+
+----
+Wed Jan 15 15:52:09 2025 [489609]
+TCP  172.16.1.66:65374 --> 172.16.1.68:5000 | AP (114)
+OPTIONS * RTSP/1.0.
+CSeq: 0.
+DACP-ID: 1234A56B7890D1E2.
+Active-Remote: 9876543210.
+User-Agent: AirPlay/775.3.1.
+
+Wed Jan 15 15:52:09 2025 [508360]
+TCP  172.16.1.68:5000 --> 172.16.1.66:65374 | AP (159)
+RTSP/1.0 200 OK.
+Public: ANNOUNCE, SETUP, RECORD, PAUSE, FLUSH, TEARDOWN, OPTIONS, GET_PARAMETER, SET_PARAMETER, POST, GET.
+Server: AirTunes/190.9.
+CSeq: 0.
+.
+
+Wed Jan 15 15:55:45 2025 [908698]
+TCP  172.16.1.66:49340 --> 172.16.1.68:5000 | AP (114)
+OPTIONS * RTSP/1.0.
+CSeq: 1.
+DACP-ID: 1234A56B7890D1E2.
+Active-Remote: 9876543210.
+User-Agent: AirPlay/775.3.1.
+.
+
+Wed Jan 15 15:55:45 2025 [926811]
+TCP  172.16.1.68:5000 --> 172.16.1.66:49340 | AP (159)
+RTSP/1.0 200 OK.
+Public: ANNOUNCE, SETUP, RECORD, PAUSE, FLUSH, TEARDOWN, OPTIONS, GET_PARAMETER, SET_PARAMETER, POST, GET.
+Server: AirTunes/190.9.
+CSeq: 1.
+
+----
+
+=== Authorization (POST Command)
+
+The client sends a POST request to `/auth-setup`, indicating authentication or key exchange. +
+The server responds with a payload of length 1076 bytes, likely containing authentication data or session parameters.
+
+----
+Wed Jan 15 15:55:45 2025 [927432]
+TCP  172.16.1.66:49340 --> 172.16.1.68:5000 | AP (214)
+POST /auth-setup RTSP/1.0.
+Content-Length: 33.
+Content-Type: application/octet-stream.
+CSeq: 2.
+DACP-ID: 1234A56B7890D1E2.
+Active-Remote: 9876543210.
+User-Agent: AirPlay/775.3.1.
+
+Wed Jan 15 15:55:47 2025 [57885]
+TCP  172.16.1.68:5000 --> 172.16.1.66:49340 | AP (114)
+RTSP/1.0 200 OK.
+Content-Type: application/octet-stream.
+Content-Length: 1076.
+Server: AirTunes/190.9.
+CSeq: 2.
+.
+----
+
+=== Session Initialization (ANNOUNCE and SETUP Commands)
+
+The client sends an ANNOUNCE request with an SDP (Session Description Protocol) payload:
+[start=1]
+* Specifies the codec (AppleLossless), sample rate (44100 Hz), and cryptographic keys (mfiaeskey, aesiv). +
+
+The server acknowledges the ANNOUNCE request and confirms session setup via a SETUP command: +
+[start=1]
+* Specifies RTP/AVP/UDP as the transport and provides port numbers for data, control, and timing communication.
+
+----
+Wed Jan 15 15:55:47 2025 [62613]
+TCP  172.16.1.66:49340 --> 172.16.1.68:5000 | AP (537)
+ANNOUNCE rtsp://172.16.1.68/2009199015507279999 RTSP/1.0.
+Content-Length: 333.
+Content-Type: application/sdp.
+CSeq: 3.
+DACP-ID: 1234A56B7890D1E2.
+Active-Remote: 9876543210.
+User-Agent: AirPlay/775.3.1.
+.
+v=0.
+o=AirTunes 2009199015507279999 0 IN IP4 172.16.1.66.
+s=AirTunes.
+i=Vakintosh...s MBPro.
+c=IN IP4 172.16.1.66.
+t=0 0.
+m=audio 0 RTP/AVP 96.
+a=rtpmap:96 AppleLossless.
+a=fmtp:96 352 0 16 40 10 14 2 255 0 0 44100.
+a=mfiaeskey:abcd1234efgh5678ijkl9012mnop3456.
+a=aesiv:987654qwerty65432==.
+a=min-latency:11025.
+a=max-latency:88200.
+
+Wed Jan 15 15:55:47 2025 [77941]
+TCP  172.16.1.68:5000 --> 172.16.1.66:49340 | AP (52)
+RTSP/1.0 200 OK.
+Server: AirTunes/190.9.
+CSeq: 3.
+
+Wed Jan 15 15:55:47 2025 [78192]
+TCP  172.16.1.66:49340 --> 172.16.1.68:5000 | AP (230)
+SETUP rtsp://172.16.1.68/2009199015507279999 RTSP/1.0.
+Transport: RTP/AVP/UDP;unicast;mode=record;timing_port=55965;control_port=50963.
+CSeq: 4.
+DACP-ID: 1234A56B7890D1E2.
+Active-Remote: 9876543210.
+User-Agent: AirPlay/775.3.1.
+
+Wed Jan 15 15:55:47 2025 [98015]
+TCP  172.16.1.68:5000 --> 172.16.1.66:49340 | AP (190)
+RTSP/1.0 200 OK.
+Transport: RTP/AVP/UDP;unicast;mode=record;server_port=1249;control_port=1251;timing_port=1247.
+Session: 1.
+Audio-Jack-Status: connected.
+Server: AirTunes/190.9.
+CSeq: 4.
+----
+
+=== Parameter Exchange (GET_PARAMETER Command)
+
+The client queries the volume parameter via a GET_PARAMETER request. +
+The server responds with the current volume value: -26.250000.
+
+----
+Wed Jan 15 15:55:47 2025 [98481]
+TCP  172.16.1.66:49340 --> 172.16.1.68:5000 | AP (215)
+GET_PARAMETER rtsp://172.16.1.68/2009199015507279999 RTSP/1.0.
+Content-Length: 8.
+Content-Type: text/parameters.
+CSeq: 5.
+DACP-ID: 1234A56B7890D1E2.
+Active-Remote: 9876543210.
+User-Agent: AirPlay/775.3.1.
+.
+volume.
+
+Wed Jan 15 15:55:47 2025 [117955]
+TCP  172.16.1.68:5000 --> 172.16.1.66:49340 | AP (103)
+RTSP/1.0 200 OK.
+Content-Type: text/parameters.
+Content-Length: 20.
+Server: AirTunes/190.9.
+CSeq: 5.
+.
+volume: -26.250000.
+----
+
+=== Streaming Begins (RECORD Command)
+
+The client sends a RECORD command to start the audio stream. +
+The server acknowledges with a response, providing an Audio-Latency value of 4316 (likely in milliseconds or RTP units).
+
+----
+Wed Jan 15 15:55:47 2025 [118243]
+TCP  172.16.1.66:49340 --> 172.16.1.68:5000 | AP (150)
+RECORD rtsp://172.16.1.68/2009199015507279999 RTSP/1.0.
+CSeq: 6.
+DACP-ID: 1234A56B7890D1E2.
+Active-Remote: 9876543210.
+User-Agent: AirPlay/775.3.1.
+.
+
+Wed Jan 15 15:55:47 2025 [198001]
+TCP  172.16.1.68:5000 --> 172.16.1.66:49340 | AP (73)
+RTSP/1.0 200 OK.
+Audio-Latency: 4316.
+Server: AirTunes/190.9.
+CSeq: 6.
+.
+----
+
+=== Streaming Stop (FLUSH Command)
+
+The client sends a FLUSH command to stop the audio stream. This command serves multiple purposes: +
+* Clear Buffered Data: It instructs the server to discard any remaining buffered audio data. +
+* Reset Stream State: The stream is reset, preparing it for future playback commands without leftover state issues. +
+The server issues an HTTP GET request to update its internal state, marking the device as no longer busy.
+----
+Wed Jan 15 15:56:05 2025 [967760]
+TCP  172.16.1.66:63018 --> 172.16.1.68:5000 | AP (189)
+FLUSH rtsp://172.16.1.68/12677144773249746566 RTSP/1.0.
+RTP-Info: seq=25571;rtptime=1813353161.
+CSeq: 7.
+DACP-ID: 1234A56B7890D1E2.
+Active-Remote: 9876543210.
+User-Agent: AirPlay/775.3.1.
+.
+
+Wed Jan 15 15:56:05 2025 [982161]
+TCP  172.16.1.68:1029 --> 172.16.1.66:49797 | AP (132)
+GET /ctrl-int/1/setproperty?dmcp.device-busy=0 HTTP/1.1.
+Host: Vakintosh...sMBPro.local..
+Active-Remote: 9876543210.
+User-Agent: AirPlay/190.9.
+.
+
+Wed Jan 15 15:56:05 2025 [982162]
+TCP  172.16.1.68:5000 --> 172.16.1.66:63018 | A (0)
+Wed Jan 15 15:56:05 2025 [982162]
+TCP  172.16.1.68:5000 --> 172.16.1.66:63018 | AP (73)
+RTSP/1.0 200 OK.
+RTP-Info: rtptime=0.
+Server: AirTunes/190.9.
+CSeq: 7.
+.
+----
+
+=== Parameter Adjustment (SET_PARAMETER Command)
+
+The client sends a SET_PARAMETER command to adjust specific playback or configuration parameters of the server. +
+This allows for real-time updates without interrupting the audio stream - in this case, to adjust the volume. +
+The server acknowledges the SET_PARAMETER request with an RTSP/1.0 200 OK response, confirming the parameter was applied successfully. +
+This ensures real-time feedback for parameter adjustments.
+
+----
+Wed Jan 15 15:56:23 2025 [635492]
+TCP  172.16.1.66:63018 --> 172.16.1.68:5000 | AP (229)
+SET_PARAMETER rtsp://172.16.1.68/12677144773249746566 RTSP/1.0.
+Content-Length: 20.
+Content-Type: text/parameters.
+CSeq: 8.
+DACP-ID: 1234A56B7890D1E2.
+Active-Remote: 9876543210.
+User-Agent: AirPlay/775.3.1.
+.
+volume: -25.533905.
+
+Wed Jan 15 15:56:30 2025 [565505]
+TCP  172.16.1.68:5000 --> 172.16.1.66:63018 | AP (53)
+RTSP/1.0 200 OK.
+Server: AirTunes/190.9.
+CSeq: 8.
+.
+----
