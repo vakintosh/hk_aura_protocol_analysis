@@ -40,7 +40,7 @@ USN: uuid:abc123-def456-ghi789-jkl012-mno345678901::upnp:rootdevice.
 . Clone this repository:
 [source,bash]
 ----
-    git clone https://github.com/vakintosh/hk_aura_protocol_analysis +
+    git clone https://github.com/vakintosh/hk_aura_protocol_analysis
 ----
 
 == Available Commands
