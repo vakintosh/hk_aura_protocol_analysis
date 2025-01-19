@@ -12,7 +12,7 @@ NOTE: This is a personal project and should be used only for personal purposes.
 == Initial attempts
 I’ve captured the packets from the speaker (172.16.1.68), the iPhone with the app installed on it (172.16.1.69), and the Mac that was streaming the music (172.16.1.66) with `sudo ettercap -T -M arp:remote /172.16.1.66// /172.16.1.68// /172.16.1.69// -w packets.pcap` and analyzed the pcap file with WireShark.
 
-I also recreate the different calls with Postman to better understand the protocol and test the commands.
+I also recreated the different calls with curl/Postman to better understand the protocol and test the commands.
 
 Looking at any packets that might be immediately relevant, we get this:
 

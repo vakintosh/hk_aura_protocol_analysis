@@ -1,3 +1,5 @@
+// Mac to Speaker
+
 === Initial Handshake (OPTIONS Command)
 
 Client (172.16.1.66) sends an OPTIONS request to the server (172.16.1.68) to query supported commands. +
