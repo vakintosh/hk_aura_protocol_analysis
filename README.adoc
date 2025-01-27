@@ -37,9 +37,15 @@ USN: uuid:abc123-def456-ghi789-jkl012-mno345678901::upnp:rootdevice.
 == Setup
 . Make sure your device is connected to the same network as the Harman Kardon speaker. +
 
-. Clone this repository +
+. Clone this repository. +
 
-. Update link:Harman_Kardon_Remote/hk_app.py#L6[python script] with the IP Address of your HK Aura
+. Update the variable HK_IP_ADDRESS in link:Harman_Kardon_Remote/.env[.env] with the IP Address of your HK Aura
+
+. Install the required dependencies:
+[,python]
+----
+pip install -r requirements.txt
+----
 
 == Available Commands
 
@@ -56,7 +62,8 @@ python hk_app.py set_system_volume --para 0
 ----
 
 === set_bass_level
-This command sets the bass level to a specified value. The bass level is specified in the <para> tag within the XML payload. The minimum value is 0 and the maximum value is 100.
+This command sets the bass level to a specified value. +
+The bass level is specified in the <para> tag within the XML payload. The minimum value is 0 and the maximum value is 100.
 [,python]
 ----
 python hk_app.py set_bass_level --para 0
@@ -86,12 +93,21 @@ It does not require any parameters in the <para> tag within the XML payload.
 python hk_app.py heart-alive
 ----
 
-=== Power-off
+=== power-off
 This command powers off the Harman Kardon Aura speaker. +
 It does not require any parameters in the <para> tag within the XML payload.
 [,python]
 ----
 python hk_app.py power-off
+----
+
+=== mute/unmute
+This command mute/unmute the Harman Kardon Aura speaker. +
+It does not require any parameters in the <para> tag within the XML payload.
+[,python]
+----
+python hk_app.py mute
+python hk_app.py unmute
 ----
 
 == Next steps

@@ -65,41 +65,64 @@ async def send_request(action: str, zone: str = 'Main Zone', para: str = None) -
 
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.post(url, data=xml_data, headers=headers, timeout=TIMEOUT):
-                logging.info(f"Request sent: {action}, zone: {zone}, para: {para}")
+            async with session.post(url, data=xml_data, headers=headers, timeout=TIMEOUT) as response:
+                # Log only successful responses or handle specific status codes
+                if response.status == 200:
+                    logging.info(f"Request sent: {action}, zone: {zone}, para: {para}")
+                else:
+                    logging.warning(f"Failed to send request: {response.status}, message={await response.text()}")
     except asyncio.TimeoutError:
         logging.warning('Request timed out. This is expected for some actions where no response is sent.')
     except Exception as e:
-        logging.error(f"Failed to send request: {e}")
-        raise
+        # Ignore error specifically for 'set_EQ_mode' action
+        if action == 'set_EQ_mode':
+            logging.warning(f"Ignoring error for action {action}: {e}")
+        else:
+            logging.error(f"Failed to send request for {action}: {e}")
+            raise
 
-def validate_para(action: str, para: str) -> None:
+
+def validate_para(action: str, para: str) -> str:
     """
-    Validate the 'para' argument based on the action.
+    Validate and map the 'para' argument based on the action.
     """
     if action in ['set_system_volume', 'set_bass_level']:
-        if not para.isdigit() or not (0 <= int(para) <= 100):
+        if isinstance(para, str) and not para.isdigit():
+            raise ValueError(f"The 'para' value for {action} must be a valid integer.")
+        elif isinstance(para, (int, str)) and not (0 <= int(para) <= 100):
             raise ValueError(f"The 'para' value for {action} must be an integer between 0 and 100.")
     elif action == 'set_EQ_mode':
-        if para not in ['on', 'off']:
+        if para == 'off':
+            return 'Basic'
+        elif para == 'on':
+            return 'Stereo Widening'
+        else:
             raise ValueError("The 'para' value for set_EQ_mode must be 'on' or 'off'.")
 
-# Typer CLI app
+    return para
+
 app = typer.Typer()
 
 @app.command()
-def run(action: str, para: int = None) -> None:
+def run(action: str, para: str = None) -> None:
     """
     Control the Harman Kardon Aura Speaker by sending commands.
     """
+    if action == 'mute':
+        action = 'mute-on'
+    elif action == 'unmute':
+        action = 'mute-off'
+
     if action in ['set_system_volume', 'set_bass_level', 'set_EQ_mode'] and para is None:
         raise ValueError(f"The '{action}' action requires the 'para' argument.")
 
     try:
-        if para is not None:
-            validate_para(action, str(para))
+        if action in ['set_system_volume', 'set_bass_level'] and isinstance(para, str):
+            para = int(para)
 
-        asyncio.run(send_request(ACTIONS[action]['name'], 'Main Zone', str(para) if para is not None else None))
+        para = validate_para(action, para)
+
+        asyncio.run(send_request(ACTIONS[action]['name'], 'Main Zone', para))
 
         print(f"Command '{action}' sent successfully.")
 
@@ -110,6 +133,7 @@ def run(action: str, para: int = None) -> None:
         logging.error(f"An error occurred: {e}")
         print('Failed to send the command. Check logs for details.')
         sys.exit(1)
+
 
 if __name__ == '__main__':
     app()
