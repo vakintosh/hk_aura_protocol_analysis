@@ -118,6 +118,7 @@ The next steps would be to implement additional playback controls such as: +
 * Stop +
 * Rewind +
 * Previous track +
-* Next track
+* Next track +
+* State monitoring (Track the state of each command to an XML payload)
 
 Additionally, integrating these controls into Home Assistant to create a seamless user experience without needing the official app would be beneficial.
